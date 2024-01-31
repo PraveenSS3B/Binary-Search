@@ -1,41 +1,57 @@
 import java.util.*;
 public class MinimizeMaxDistanceToGasStation {
 
-    static class Pair{
-        double first;
-        int second;
-        Pair(double first, int second) {
-            this.first = first;
-            this.second = second;
-        }
-    }
+     public static int find(int []arr, double dist, int k){
+         int c = 0;
+
+         for(int i = 1; i < arr.length; i++)
+         {
+             int noOfGsPossibleInBetween = (int)((arr[i] - arr[i - 1]) / dist);
+             if(noOfGsPossibleInBetween * dist == arr[i] - arr[i - 1])
+             {
+                 noOfGsPossibleInBetween--;
+             }
+             c += noOfGsPossibleInBetween;
+
+             if(c > k)
+             {
+                 return c;
+             }
+         }
+
+         return c;
+     }
+
 
     public static double MinimiseMaxDistance(int []arr, int K){
         int n = arr.length;
-        int howManyPlaced[] = new int[n];
+        double high = Integer.MIN_VALUE, low = 0;
 
-        PriorityQueue<Pair> pq = new PriorityQueue<>((a,b) -> Double.compare(b.first, a.first));
-
-
-        for (int i = 1; i < n; i++) {
-            pq.add(new Pair(arr[i] - arr[i - 1], i - 1));
-        }
-
-        for(int gs = 1; gs <= K; gs++)
+        for(int i = 0; i < n - 1; i++)
         {
-            Pair top = pq.poll();
-            int secInd = top.second;
-
-            howManyPlaced[secInd]++;
-
-            double diff = arr[secInd + 1] - arr[secInd];
-            double secLen = diff / (howManyPlaced[secInd] + 1);
-
-            pq.add(new Pair(secLen, secInd));
-
+            high = Math.max(high, arr[i + 1] - arr[i]);
         }
-        
 
-        return pq.peek().first;
+        double diff = 1e-6 ;
+
+        while((high - low) > diff)
+        {
+            double mid = (double)(low + (high - low) / 2);
+
+            int gasStationsCount = find(arr, mid, K);
+
+            if(gasStationsCount > K)
+            {
+                low = mid;
+            }
+
+            else
+            {
+                high = mid;
+            }
+        }
+
+        return high;
+        
     }
 }
