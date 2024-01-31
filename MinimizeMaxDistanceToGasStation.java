@@ -1,34 +1,41 @@
+import java.util.*;
 public class MinimizeMaxDistanceToGasStation {
+
+    static class Pair{
+        double first;
+        int second;
+        Pair(double first, int second) {
+            this.first = first;
+            this.second = second;
+        }
+    }
+
     public static double MinimiseMaxDistance(int []arr, int K){
         int n = arr.length;
         int howManyPlaced[] = new int[n];
 
+        PriorityQueue<Pair> pq = new PriorityQueue<>((a,b) -> Double.compare(b.first, a.first));
+
+
+        for (int i = 1; i < n; i++) {
+            pq.add(new Pair(arr[i] - arr[i - 1], i - 1));
+        }
+
         for(int gs = 1; gs <= K; gs++)
         {
-            double maxSecLen = -1; int maxSecIndex = -1;
-            for(int i = 0; i < n - 1; i++)
-            {
-                double diff = arr[i + 1] - arr[i];
-                double sectionLen = (diff / (howManyPlaced[i] + 1));
+            Pair top = pq.poll();
+            int secInd = top.second;
 
-                if(sectionLen > maxSecLen)
-                {
-                    maxSecLen = sectionLen;
-                    maxSecIndex = i;
-                }
-            }
-            howManyPlaced[maxSecIndex]++;
+            howManyPlaced[secInd]++;
+
+            double diff = arr[secInd + 1] - arr[secInd];
+            double secLen = diff / (howManyPlaced[secInd] + 1);
+
+            pq.add(new Pair(secLen, secInd));
+
         }
+        
 
-        double maxAns = -1;
-
-        for(int i = 0; i < n - 1; i++)
-        {
-            double diff = arr[i + 1] - arr[i];
-            double sectionLen = (diff / (howManyPlaced[i] + 1));
-            maxAns = Math.max(maxAns, sectionLen);
-        }
-
-        return maxAns;
+        return pq.peek().first;
     }
 }
