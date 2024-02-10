@@ -1,42 +1,30 @@
 package in.Searching;
 
 public class SearchInMatrix {
+  public boolean searchMatrix(int[][] matrix, int target) {
 
-	public static void main(String[] args) {
-		int arr[][] = {{1}};
-		
-		System.out.println(searchMatrix(arr,1));
+    // [1,3,5,7,10,11,16,20,23,30,34,60]
 
-	}
+    int rs = matrix.length;
+    int cs = matrix[0].length;
+    int low = 0, high = rs * cs - 1;
 
-	public static boolean findTarget(int[] arr, int target) {
-		int low = 0, high = arr.length - 1;
+    while (low <= high) {
+      int mid = low + (high - low) / 2;
 
-		while (low <= high) {
-			int mid = low + (high - low) / 2;
-			if (arr[mid] == target)
-				return true;
-			else if (arr[mid] > target) {
-				high = mid - 1;
-			}
+      int row = mid / cs;
 
-			else {
-				low = mid + 1;
-			}
-		}
+      int col = mid % cs;
 
-		return false;
-	}
+      if (matrix[row][col] == target) {
+        return true;
+      } else if (matrix[row][col] > target) {
+        high = mid - 1;
+      } else {
+        low = mid + 1;
+      }
+    }
 
-	public static boolean searchMatrix(int[][] matrix, int target) {
-
-		for (int i = 0; i < matrix.length; i++) {
-			int n = matrix[i].length;
-			if (matrix[i][n - 1] >= target) {
-				return findTarget(matrix[i], target);
-			}
-		}
-
-		return false;
-	}
+    return false;
+  }
 }
